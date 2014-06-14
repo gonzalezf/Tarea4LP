@@ -27,19 +27,32 @@
                   
         
 
-(define leercaracterporcaracter x
-  (let letra car(x)
-    (begin
-      (display 'letraes)
-      (display letra)
-    ) ;; termina el begin
-    
-    );; hasta aqui deja de ser visible la letra
-  (leercaracterporcaracter cdr(x))
-  )
+(define (leercaracterporcaracter x)
+  (if (null? x)
+      #f  
+      
+      (begin ;; else....
+      (display '(letraes))
+      (display (car x) )
+      (leercaracterporcaracter (cdr x))
+     ))) ;; termina el begin
+       
+ (leercaracterporcaracter '(pr h))
 
 
 
+
+
+
+
+;; aqui se define una funcion para mostrar una lista 
+(define (list-display lis)
+          (if (null? lis)
+              #f
+              (begin (display (car lis))
+                     (list-display (cdr lis)))))
+
+;; asi se debe probar!(list-display '(abc)) 
 
 (let ((p (open-input-file "crossword_1.txt")))
   (let f ((x (read p))) ;; p = #<input-port:C:\Users\Felipe Gonzalez\Documents\Tarea4LP\crossword_1.txt>
@@ -49,15 +62,29 @@
           '())
      
         (begin
+    
          (display x) ;; en este punto no estamos leyendo caracter por caracter, leemos todo el texto de una sola vez
-   
+         (f(read p)))
          )
-           
-        
-         (f(read p))) ;; llamamos esta funcion para cerrar el archivo
+          
         ))
                 
        
+;; probando si conseguimos leer caracter por caracter
+(let ((p (open-input-file "words_1.txt")))
+  (let f ((x (read p))) ;; p = #<input-port:C:\Users\Felipe Gonzalez\Documents\Tarea4LP\crossword_1.txt>
+    (if (eof-object? x)  ;; si  es final de archivo......
+        (begin
+          (close-input-port p) ;; cerrar archivo
+          '())
+     
+        (begin
+          (display '(funciona))
+         (display x) ;; en este punto no estamos leyendo caracter por caracter, leemos todo el texto de una sola vez
+         (f(read p)))
+         )
+          
+        ))
            
 
             

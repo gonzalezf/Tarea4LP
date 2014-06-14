@@ -1,7 +1,1 @@
-'((---------pan)
-(---pescado--)
-(tomate---l--)
-(---s-----l--)
-(---t-queso--)
-(---e--------)
-(---l--------))
+'("pescado" "pollo" "pan" "tomate" "queso" "pastel")
