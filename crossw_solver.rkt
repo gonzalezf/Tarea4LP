@@ -70,23 +70,43 @@
         ))
                 
        
-;; probando si conseguimos leer caracter por caracter
+(define leer_archivo
+  (lambda(x)
+    (let ((p (open-input-file x)))
+      (let leer ((x (read p)))
+        (cond (eof-object? x)
+              (close-input-port p)
+              (cons x (leer (read x)))
+        )
+
+       
+      )
+    )
+  )
+)
+(list-ref (car(cdr(leer_archivo "words_1.txt")))2)
+;; Extrae palabra a palabra del archivo words_1
+(define (getwords)
 (let ((p (open-input-file "words_1.txt")))
   (let f ((x (read p))) ;; p = #<input-port:C:\Users\Felipe Gonzalez\Documents\Tarea4LP\crossword_1.txt>
     (if (eof-object? x)  ;; si  es final de archivo......
         (begin
           (close-input-port p) ;; cerrar archivo
           '())
-     
-        (begin
-          (display '(funciona))
-         (display x) ;; en este punto no estamos leyendo caracter por caracter, leemos todo el texto de una sola vez
-         (f(read p)))
+         (display  (car x)  )
+         
+         
+      ;;   (cons (car(string->list x)) list)
+         ;; en este punto no estamos leyendo caracter por caracter, leemos todo el texto de una sola vez
+
+        )
+       )
          )
           
-        ))
-           
+        )
 
+(getwords ) 
+   
             
 
   
