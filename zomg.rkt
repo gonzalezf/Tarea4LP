@@ -24,6 +24,8 @@ crucigrama
 ;desde la posicion a hasta b. Incluye ambos extremos
 (define (sublist l a b)
   (cond
+    ((not (pair? l))
+     l)
     ((and (> a 0) (>= b 0))
      (sublist (cdr l) (- a 1) (- b 1)))
     ((and (<= a 0) (>= b 0))
@@ -36,20 +38,13 @@ crucigrama
 ;por c
 (define (modify-list l x c)
   (cond
-    (
-     (= x 0)
-     (cons c (modify-list (cdr l) (- x 1) c))
-     )
-    (
-     (null? l)
-     '()
-     )
-    (
-     else
-     (cons (car l) (modify-list (cdr l) (- x 1) c))
-     )
-    )
-  )
+    ((= x 0)
+     (cons c (modify-list (cdr l) (- x 1) c)))
+    ((null? l)
+     '())
+    (else
+     (cons (car l) (modify-list (cdr l) (- x 1) c)))))
+
 ;Obtener el caracter en la posicion (x, y) en el crucigrama.
 ;Comienza desde 0.
 (define (get-at l x y)
@@ -97,14 +92,29 @@ crucigrama
 ;Retorna true si la palabra cabe de forma horizontal
 ;Chequea que coincida la primera letra y que tenga el mismo tamaño
 (define (try-word-horizontal l word x y)
+  (if (and (> (string-length word) 0) (string? word))
+  (begin
+    (display x)
+    (display #\|)
+    (display y)
+    (display #\|)
+    (display word)
+    (newline)
   (let ((word-len (string-length word)))
-    (and (char=? (string-ref word 0) (car (get-at l x y))) (= word-len (+ 1 (casillas-horizontales l x y (length (car l))))))))  
+    (cond
+      ;((not (pair? (get-at l x y)))
+       ;(and (or (char=? (string-ref word 0) (get-at l x y)) (char=? #\* (car (get-at l x y)))) (= word-len (+ 1 (casillas-horizontales l x y (length (car l)))))))
+      ((and (or (char=? (string-ref word 0) (car (get-at l x y))) (char=? #\* (car (get-at l x y)))) (= word-len (+ 1 (casillas-horizontales l x y (length (car l))))))
+        #t)
+      (else
+      (try-word-horizontal l (substring word 1) (+ x 1) y)))))
+  #t))
 
 ;Retorna true si la palabra cabe de forma vertical
 ;Chequea que conicida la primera letra y que tenga el mismo tamaño
 (define (try-word-vertical l word x y)
   (let ((word-len (string-length word)))
-    (= word-len (+ 1 (casillas-verticales l x y (length l))))))
+    (and (or (char=? (string-ref word 0) (car (get-at l x y))) (char=? #\* (car (get-at l x y)))) (= word-len (+ 1 (casillas-verticales l x y (length l)))))))
 
 ;Escribe la palabra de forma horizontal desde la posicion x y
 (define (write-word-horizontal l w x y total)
