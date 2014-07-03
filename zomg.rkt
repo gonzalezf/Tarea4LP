@@ -75,7 +75,7 @@ crucigrama
   (cond
     ((>= (+ x 1) max-x)
      0)
-    ((char=? (car (get-at l (+ x 1) y)) #\*)
+    ((not (char=? (car (get-at l (+ x 1) y)) #\-))
      (+ (casillas-horizontales l (+ x 1) y max-x) 1))
      (else
       0)))
@@ -84,7 +84,7 @@ crucigrama
   (cond
     ((>= (+ y 1) max-y)
      0)
-    ((char=? (car (get-at l x (+ y 1))) #\*)
+    ((not (char=? (car (get-at l x (+ y 1))) #\-))
      (+ (casillas-verticales l x (+ y 1) max-y) 1))
      (else
       0)))
@@ -93,28 +93,29 @@ crucigrama
 ;Chequea que coincida la primera letra y que tenga el mismo tamaño
 (define (try-word-horizontal l word x y)
   (if (and (> (string-length word) 0) (string? word))
-  (begin
-    (display x)
-    (display #\|)
-    (display y)
-    (display #\|)
-    (display word)
-    (newline)
   (let ((word-len (string-length word)))
     (cond
-      ;((not (pair? (get-at l x y)))
-       ;(and (or (char=? (string-ref word 0) (get-at l x y)) (char=? #\* (car (get-at l x y)))) (= word-len (+ 1 (casillas-horizontales l x y (length (car l)))))))
+      ((>= x (length(car l)))
+       #t)
       ((and (or (char=? (string-ref word 0) (car (get-at l x y))) (char=? #\* (car (get-at l x y)))) (= word-len (+ 1 (casillas-horizontales l x y (length (car l))))))
-        #t)
+      (try-word-horizontal l (substring word 1) (+ x 1) y))
       (else
-      (try-word-horizontal l (substring word 1) (+ x 1) y)))))
+      #f)))
   #t))
 
 ;Retorna true si la palabra cabe de forma vertical
 ;Chequea que conicida la primera letra y que tenga el mismo tamaño
 (define (try-word-vertical l word x y)
+  (if (and (> (string-length word) 0) (string? word))
   (let ((word-len (string-length word)))
-    (and (or (char=? (string-ref word 0) (car (get-at l x y))) (char=? #\* (car (get-at l x y)))) (= word-len (+ 1 (casillas-verticales l x y (length l)))))))
+    (cond
+      ((>= y (length l))
+       #t)
+      ((and (or (char=? (string-ref word 0) (car (get-at l x y))) (char=? #\* (car (get-at l x y)))) (= word-len (+ 1 (casillas-verticales l x y (length l)))))
+      (try-word-vertical l (substring word 1) x (+ y 1)))
+      (else
+      #f)))
+  #t))
 
 ;Escribe la palabra de forma horizontal desde la posicion x y
 (define (write-word-horizontal l w x y total)
@@ -145,7 +146,14 @@ crucigrama
 (define (solve-the-crossword cru pos wrds)
   (if (null? pos)
       cru
-      (solve-the-crossword (try-all-words cru wrds (car(car pos)) (cdr(car pos))) (cdr pos) wrds)))
+      (cond
+        ((eqv? cru (try-all-words cru wrds (car(car pos)) (cdr(car pos))))
+            (begin
+              (display "No se pudo colocar ninguna palabra en una posicion")
+              (newline)
+              cru))
+        (else
+         (solve-the-crossword (try-all-words cru wrds (car(car pos)) (cdr(car pos))) (cdr pos) wrds)))))
   
 
 ;Testeos ETC

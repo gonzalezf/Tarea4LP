@@ -1,1 +1,1 @@
-'("pescadoo" "pollo" "pan" "tomate" "queso" "pastel")
+'("pollo" "pan" "pastelo" "rollo" "potero" "postal" "ronoso")
